@@ -27,11 +27,34 @@ async function getWeather(parent, args, context, info) {
 }
 
 async function getBus(parent, args, context, info) {
-    let busData = await request("http://ectbustracker.doublemap.com/map/v2/buses", function(error, response, body) {});
-    let routeData = await request("http://ectbustracker.doublemap.com/map/v2/routes", function(error, response, body) {});
+    let busData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/buses", function(error, response, body) {}));
+    let routeData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/routes", function(error, response, body) {}));
+    let stopData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/stops", function(error, response, body) {}));
+    routeData.forEach(function(route) {
+        var newRouteStops = [];
+        var routeStops = route.stops;
+        routeStops.forEach(function(routeStop) {
+            var i = 0;
+            var thisStop;
+            while (i > -1) {
+                if (stopData[i].id == routeStop) {
+                    thisStop = {
+                        id: stopData[i].id,
+                        name: stopData[i].name
+                    }
+                    newRouteStops.push(thisStop);
+                    i = -2;
+                }
+                i++;
+            }
+        });
+        route.stops = newRouteStops;
+    });
+    
+
     var data = {
-        routes: JSON.parse(routeData),
-        buses: JSON.parse(busData)
+        buses: busData,
+        routes: routeData
     }
     return data;
 }

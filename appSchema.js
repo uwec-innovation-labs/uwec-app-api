@@ -26,8 +26,13 @@ var appSchema = buildSchema(`
     type Route {
         name: String
         id: Int
-        stops: [Int]
+        stops: [Stop]
         path: [String]
+    }
+
+    type Stop {
+        id: Int
+        name: String
     }
 
     type Bus {
