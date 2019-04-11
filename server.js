@@ -12,7 +12,8 @@ const app = express();
 
 var global = {
   laundry: appController.getLaundry,
-  weather: appController.getWeather
+  weather: appController.getWeather,
+  bus_data: appController.getBus
 }
 
 app.use(

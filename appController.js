@@ -26,7 +26,18 @@ async function getWeather(parent, args, context, info) {
     return returnValue;
 }
 
+async function getBus(parent, args, context, info) {
+    let busData = await request("http://ectbustracker.doublemap.com/map/v2/buses", function(error, response, body) {});
+    let routeData = await request("http://ectbustracker.doublemap.com/map/v2/routes", function(error, response, body) {});
+    var data = {
+        routes: JSON.parse(routeData),
+        buses: JSON.parse(busData)
+    }
+    return data;
+}
+
 module.exports = {
     "getLaundry": getLaundry,
-    "getWeather": getWeather
+    "getWeather": getWeather,
+    "getBus": getBus
 }
