@@ -27,34 +27,82 @@ async function getWeather(parent, args, context, info) {
 }
 
 async function getBus(parent, args, context, info) {
-    let busData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/buses", function(error, response, body) {}));
-    let routeData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/routes", function(error, response, body) {}));
-    let stopData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/stops", function(error, response, body) {}));
-    routeData.forEach(function(route) {
-        var newRouteStops = [];
-        var routeStops = route.stops;
-        routeStops.forEach(function(routeStop) {
-            var i = 0;
-            var thisStop;
-            while (i > -1) {
-                if (stopData[i].id == routeStop) {
-                    thisStop = {
-                        id: stopData[i].id,
-                        name: stopData[i].name
-                    }
-                    newRouteStops.push(thisStop);
-                    i = -2;
-                }
-                i++;
-            }
+    var myBuses;
+    if (parent.buses != undefined) {    
+        let busData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/buses", function(error, response, body) {}));
+        myBuses = busData.filter(function(value, index, arr) {
+            return parent.buses.includes(value.id);
         });
-        route.stops = newRouteStops;
-    });
-    
+    }
+
+    var myRoutes;
+    if (parent.routes != undefined) {
+        let routeData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/routes", function(error, response, body) {}));
+        myRoutes = routeData.filter(function(value, index, arr) {
+            return parent.routes.includes(value.id);
+        });
+
+        //if no particular stops are defined, the only stop information available will be the id, because it takes far too much time to generate name and ETA for each stop along a route
+        if (parent.stops == undefined) {
+            myRoutes.forEach(function(route) {
+                var newStops = [];
+                route.stops.forEach(function(stop, i) {
+                    var stopId = stop;
+                    var newStop = {
+                        id: stopId
+                    }
+                    newStops.push(newStop);
+                });
+                route.stops = newStops;
+            });
+        }
+    }
+
+    var myStops;
+    if (parent.stops != undefined) {
+        let stopData = JSON.parse(await request("http://ectbustracker.doublemap.com/map/v2/stops", function(error, response, body) {}));
+        if (parent.stops != undefined) {
+            stopData = stopData.filter(function(value, index, arr) {
+                return parent.stops.includes(value.id);
+            });
+        }
+        myStops = stopData;
+
+        //add ETA data
+        var i = 0;
+        while (i < myStops.length) {
+            var stop = myStops[i];
+            let etaData = JSON.parse(await request(("http://ectbustracker.doublemap.com/map/v2/eta?stop=" + stop.id), function(error, response, body) {}));
+            stop.etas = (etaData.etas["" + stop.id]).etas;
+            i++;
+        }
+
+        if (parent.routes != undefined) {
+            myRoutes.forEach(function(route) {
+                if (parent.stops != undefined) {
+                    route.stops = route.stops.filter(function(value, index, arr) {
+                        return parent.stops.includes(value);
+                    });
+                }
+                var s = 0;
+                while (s < route.stops.length) {
+                    var findStop = route.stops[s];
+                    route.stops[s] = myStops.find(function(element) {
+                        return element.id == findStop;
+                    });
+                    s++;
+                }
+            });
+            myRoutes = myRoutes.filter(function(value, index, arr) {
+                return value.stops.length > 0;
+            });
+        }
+    }    
 
     var data = {
-        buses: busData,
-        routes: routeData
+        buses: myBuses,
+        routes: myRoutes,
+        stops: myStops
     }
     return data;
 }

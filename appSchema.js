@@ -4,7 +4,7 @@ var appSchema = buildSchema(`
     type Query {
         laundry(id:Int!): Laundry
         weather: Weather
-        bus_data(stop:Int): BusData
+        bus_data(stops:[Int], routes:[Int], buses:[Int]): BusData
     }
 
     type Laundry {
@@ -21,6 +21,7 @@ var appSchema = buildSchema(`
     type BusData {
         buses: [Bus]
         routes: [Route]
+        stops: [Stop]
     }
 
     type Route {
@@ -33,10 +34,17 @@ var appSchema = buildSchema(`
     type Stop {
         id: Int
         name: String
+        etas: [Eta]
+    }
+
+    type Eta {
+        bus_id: Int
+        route: Int
+        avg: Int
     }
 
     type Bus {
-        id: String,
+        id: Int,
         name: String
         lat: String
         lon: String
