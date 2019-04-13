@@ -1,15 +1,24 @@
-var { buildSchema } = require('graphql')
+var { buildSchema } = require('graphql');
 
 var appSchema = buildSchema(`
     type Query {
         laundry(id:Int!): Laundry
         weather: Weather
         bus_data(stops:[Int], routes:[Int], buses:[Int]): BusData
+        laundryRoom: LaundryRoom
     }
 
     type Laundry {
         id: Int
         timeRemaining: Int
+    }
+    
+    type LaundryRoom {
+        id: String
+        totalNumWashers: Int
+        totalNumDryers: Int
+        washersAvailable: Int
+        dryersAvailable: Int
     }
 
     type Weather {
@@ -53,8 +62,8 @@ var appSchema = buildSchema(`
         route: Int
         bus_type: String
     }
-`)
+`);
 
 module.exports = {
-    "appSchema": appSchema
-}
+  appSchema: appSchema
+};
