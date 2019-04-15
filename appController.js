@@ -1,5 +1,8 @@
 const sql = require('mssql')
 const request = require('request-promise')
+const axios = require("axios")
+const cheerio = require("cheerio")
+const newsURL = "https://www.spectatornews.com/";
 
 async function getLaundry(parent, args, context, info) {
     var id = parent.id;
@@ -107,8 +110,39 @@ async function getBus(parent, args, context, info) {
     return data;
 }
 
+async function getNews(parent, args, context, info) {
+    let data = await axios.get(newsURL).then(response => {
+        if (response.status === 200) {
+          // reads, loads, and parses html into readable form
+          // current version scrapes for top navigation bar
+          // final implementation will scrape for alternate parking banner and it's details
+          const html = response.data;
+          const $ = cheerio.load(html);
+          let newsItems = [];
+          
+          $(".carousel-widget-slide").each((i, elm) => {
+              var title = $('a[class=homeheadline]', $(elm)).html();
+              var link = $(elm).children("a").attr('href');
+              var image = $(elm).children("a").children("img").attr("src");
+              newsItems.push({
+                title: title,
+                link: link,
+                image: image
+              });
+          });
+
+          
+          return newsItems;
+        }
+    }).then(response => {
+        return response;
+    });
+    return data;
+}
+
 module.exports = {
     "getLaundry": getLaundry,
     "getWeather": getWeather,
-    "getBus": getBus
+    "getBus": getBus,
+    "getNews": getNews
 }

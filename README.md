@@ -73,4 +73,11 @@ Available queries:
         }
     }
 
-        
+- news: gets the headlines off the Spectator webpage, along with links to the articles and the accompanying pictures
+    {
+        news {
+            title
+            link
+            image
+        }
+    }

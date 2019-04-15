@@ -13,7 +13,8 @@ const app = express();
 var global = {
   laundry: appController.getLaundry,
   weather: appController.getWeather,
-  bus_data: appController.getBus
+  bus_data: appController.getBus,
+  news: appController.getNews
 }
 
 app.use(

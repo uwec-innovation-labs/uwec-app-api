@@ -5,6 +5,13 @@ var appSchema = buildSchema(`
         laundry(id:Int!): Laundry
         weather: Weather
         bus_data(stops:[Int], routes:[Int], buses:[Int]): BusData
+        news: [News]
+    }
+
+    type News {
+        title: String
+        link: String
+        image: String
     }
 
     type Laundry {
