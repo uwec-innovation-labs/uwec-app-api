@@ -5,7 +5,7 @@ var appSchema = buildSchema(`
         laundry(id:Int!): Laundry
         weather: Weather
         bus_data(stops:[Int], routes:[Int], buses:[Int]): BusData
-        laundryRoom: LaundryRoom
+        laundryRoom(building:String!): LaundryRoom
         news: [News]
     }
 

@@ -21,7 +21,7 @@ async function getLaundry(parent, args, context, info) {
 async function getLaundryRoom(parent, args, context, info) {
   // Return laundryRoom with dummy data for the stats of the room
   var laundryRoom = {
-    id: 'Towers_South',
+    id: parent.building,
     totalNumWashers: 9,
     totalNumDryers: 9,
     washersAvailable: 4,
