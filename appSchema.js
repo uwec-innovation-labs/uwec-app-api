@@ -1,4 +1,4 @@
-var { buildSchema } = require('graphql');
+var { buildSchema } = require('graphql')
 
 var appSchema = buildSchema(`
     type Query {
@@ -6,6 +6,13 @@ var appSchema = buildSchema(`
         weather: Weather
         bus_data(stops:[Int], routes:[Int], buses:[Int]): BusData
         laundryRoom: LaundryRoom
+        news: [News]
+    }
+
+    type News {
+        title: String
+        link: String
+        image: String
     }
 
     type Laundry {
@@ -62,8 +69,8 @@ var appSchema = buildSchema(`
         route: Int
         bus_type: String
     }
-`);
+`)
 
 module.exports = {
   appSchema: appSchema
-};
+}

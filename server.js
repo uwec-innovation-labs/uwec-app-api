@@ -1,21 +1,22 @@
-const express = require('express');
-const graphqlHTTP = require('express-graphql');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
-const cors = require('cors');
-var path = require('path');
-var appController = require('./appController.js');
+const express = require('express')
+const graphqlHTTP = require('express-graphql')
+const bodyParser = require('body-parser')
+const morgan = require('morgan')
+const cors = require('cors')
+var path = require('path')
+var appController = require('./appController.js')
 
 //get data types (Query, Solar, Building, Date)
-var schema = require('./appSchema.js').appSchema;
-const app = express();
+var schema = require('./appSchema.js').appSchema
+const app = express()
 
 var global = {
   laundry: appController.getLaundry,
   weather: appController.getWeather,
   bus_data: appController.getBus,
-  laundryRoom: appController.getLaundryRoom
-};
+  laundryRoom: appController.getLaundryRoom,
+  news: appController.getNews
+}
 
 app.use(
   '/graphql',
@@ -24,6 +25,6 @@ app.use(
     rootValue: global,
     graphiql: true
   })
-);
+)
 
-app.listen(4000, () => console.log('GraphQL is running on port 4000'));
+app.listen(4000, () => console.log('GraphQL is running on port 4000'))
