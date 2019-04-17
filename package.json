@@ -1,21 +1,15 @@
 {
-  "name": "uwec-app-api",
+  "name": "apollo-test",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "author": "",
-  "license": "ISC",
+  "main": "index.js",
+  "license": "MIT",
   "dependencies": {
+    "apollo-server": "^2.4.8",
+    "apollo-server-express": "^2.4.8",
     "cheerio": "^1.0.0-rc.3",
-    "cors": "^2.8.5",
-    "express-graphql": "^0.7.1",
+    "crypto": "^1.0.1",
     "graphql": "^14.2.1",
-    "morgan": "^1.9.1",
-    "request": "^2.88.0",
+    "mssql": "^5.0.6",
     "request-promise": "^4.2.4"
   },
   "prettier": {
