@@ -8,9 +8,7 @@
     "apollo-server": "^2.4.8",
     "apollo-server-express": "^2.4.8",
     "cheerio": "^1.0.0-rc.3",
-    "crypto": "^1.0.1",
     "graphql": "^14.2.1",
-    "mssql": "^5.0.6",
     "request-promise": "^4.2.4"
   },
   "prettier": {

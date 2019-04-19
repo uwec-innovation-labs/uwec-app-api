@@ -1,7 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
-const sql = require('mssql')
 const request = require('request-promise')
-const axios = require('axios')
 const cheerio = require('cheerio')
 const newsURL = 'https://www.spectatornews.com/'
 
