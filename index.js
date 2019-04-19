@@ -9,7 +9,7 @@ const newsURL = 'https://www.spectatornews.com/'
 const typeDefs = gql`
   type Query {
     laundry(id: Int!): Laundry
-    weather: Weather
+    weather(id: Int): Weather
     bus_data(stops: [Int], routes: [Int], buses: [Int]): BusData
     laundryRoom: LaundryRoom
     news: [News]
@@ -23,12 +23,10 @@ const typeDefs = gql`
     link: String
     image: String
   }
-
   type Laundry {
     id: Int
     timeRemaining: Int
   }
-
   type LaundryRoom {
     id: String
     totalNumWashers: Int
@@ -36,38 +34,32 @@ const typeDefs = gql`
     washersAvailable: Int
     dryersAvailable: Int
   }
-
   type Weather {
     degrees: String
     status: String
     precipitation: Int
   }
-
   type BusData {
     buses: [Bus]
     routes: [Route]
     stops: [Stop]
   }
-
   type Route {
     name: String
     id: Int
     stops: [Stop]
     path: [String]
   }
-
   type Stop {
     id: Int
     name: String
     etas: [Eta]
   }
-
   type Eta {
     bus_id: Int
     route: Int
     avg: Int
   }
-
   type Bus {
     id: Int
     name: String
@@ -126,7 +118,7 @@ const resolvers = {
 
     bus_data: async (parent, args, context, info) => {
       var myBuses
-      if (parent.buses != undefined) {
+      if (args.buses != undefined) {
         let busData = JSON.parse(
           await request(
             'http://ectbustracker.doublemap.com/map/v2/buses',
@@ -134,12 +126,12 @@ const resolvers = {
           )
         )
         myBuses = busData.filter(function(value, index, arr) {
-          return parent.buses.includes(value.id)
+          return args.buses.includes(value.id)
         })
       }
 
       var myRoutes
-      if (parent.routes != undefined) {
+      if (args.routes != undefined) {
         let routeData = JSON.parse(
           await request(
             'http://ectbustracker.doublemap.com/map/v2/routes',
@@ -147,11 +139,11 @@ const resolvers = {
           )
         )
         myRoutes = routeData.filter(function(value, index, arr) {
-          return parent.routes.includes(value.id)
+          return args.routes.includes(value.id)
         })
 
         //if no particular stops are defined, the only stop information available will be the id, because it takes far too much time to generate name and ETA for each stop along a route
-        if (parent.stops == undefined) {
+        if (args.stops == undefined) {
           myRoutes.forEach(function(route) {
             var newStops = []
             route.stops.forEach(function(stop, i) {
@@ -167,16 +159,16 @@ const resolvers = {
       }
 
       var myStops
-      if (parent.stops != undefined) {
+      if (args.stops != undefined) {
         let stopData = JSON.parse(
           await request(
             'http://ectbustracker.doublemap.com/map/v2/stops',
             function(error, response, body) {}
           )
         )
-        if (parent.stops != undefined) {
+        if (args.stops != undefined) {
           stopData = stopData.filter(function(value, index, arr) {
-            return parent.stops.includes(value.id)
+            return args.stops.includes(value.id)
           })
         }
         myStops = stopData
@@ -195,11 +187,11 @@ const resolvers = {
           i++
         }
 
-        if (parent.routes != undefined) {
+        if (args.routes != undefined) {
           myRoutes.forEach(function(route) {
-            if (parent.stops != undefined) {
+            if (args.stops != undefined) {
               route.stops = route.stops.filter(function(value, index, arr) {
-                return parent.stops.includes(value)
+                return args.stops.includes(value)
               })
             }
             var s = 0
