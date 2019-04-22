@@ -3,6 +3,7 @@ const request = require('request-promise')
 const axios = require('axios')
 const cheerio = require('cheerio')
 const newsURL = 'https://www.spectatornews.com/'
+const foodURL = 'https://www.uwec.edu/campus-life/housing-dining/dining/food-services/dining-hours/'
 
 async function getLaundry(parent, args, context, info) {
   var id = parent.id
@@ -153,15 +154,12 @@ async function getNews(parent, args, context, info) {
     .get(newsURL)
     .then(response => {
       if (response.status === 200) {
-        // reads, loads, and parses html into readable form
-        // current version scrapes for top navigation bar
-        // final implementation will scrape for alternate parking banner and it's details
         const html = response.data
         const $ = cheerio.load(html)
         let newsItems = []
 
         $('.carousel-widget-slide').each((i, elm) => {
-          var title = $('a[class=homeheadline]', $(elm)).html()
+          var title = $('a[class=homeheadline]', $(elm)).text()
           var link = $(elm)
             .children('a')
             .attr('href')
@@ -185,10 +183,82 @@ async function getNews(parent, args, context, info) {
   return data
 }
 
+async function getDining(parent, args, context, info) {
+  let data = await axios
+    .get(foodURL)
+    .then(response => {
+      if (response.status === 200) {
+        const html = response.data
+        const $ = cheerio.load(html)
+        let dining = [];
+        var diningIndex = -1;
+
+        var diningTables = ["section[id=sec-table-s]", "section[id=sec-table-s-5]"];
+        diningTables.forEach(function(table) {
+          $(table).children('table').children('tbody').children().each((i, elm) => {
+            console.log("here 1");
+            $(elm).children().each((j, elm2) => {
+              console.log($(elm2).text());
+              if (($(elm2).text() !== "") && ($(elm2).text() !== "Riverview Cafe East")) {
+                if (j == 0) {
+                  var diningName = $(elm2).text().trim().replace(/\xa0/g, "").replace(/ +/g, " ");
+                  if (diningName === "Breakfast") {
+                    diningName = "Riverview Cafe East - Breakfast";
+                  } else if (diningName === "Lunch") {
+                    diningName = "Riverview Cafe East - Lunch";
+                  } else if (diningName === "Dinner") {
+                    diningName = "Riverview Cafe East - Dinner";
+                  }
+                  diningIndex++;
+                  dining[diningIndex] = {
+                    name: diningName,
+                    hours: []
+                  };
+                } else if (j == 1) {
+                  dining[diningIndex].hours.push("Monday: " + $(elm2).text());
+                } else if (j == 2) {
+                  dining[diningIndex].hours.push("Tuesday: " + $(elm2).text());
+                } else if (j == 3) {
+                  dining[diningIndex].hours.push("Wednesday: " + $(elm2).text());
+                } else if (j == 4) {
+                  dining[diningIndex].hours.push("Thursday: " + $(elm2).text());
+                } else if (j == 5) {
+                  dining[diningIndex].hours.push("Friday: " + $(elm2).text());
+                } else if (j == 6) {
+                  dining[diningIndex].hours.push("Saturday: " + $(elm2).text());
+                } else if (j == 7) {
+                  dining[diningIndex].hours.push("Sunday: " + $(elm2).text());
+                }
+              }
+            });
+          });
+        });
+        return dining;
+      }
+    })
+    .then(response => {
+      return response
+    })
+  return data;
+}
+
 module.exports = {
   getLaundry: getLaundry,
   getWeather: getWeather,
   getBus: getBus,
   getLaundryRoom: getLaundryRoom,
-  getNews: getNews
+  getNews: getNews,
+  getDining: getDining
+}
+
+function addDays(hoursList) {
+  hoursList[0] = "Monday: " + hoursList[0];
+  hoursList[1] = "Tuesday: " + hoursList[1];
+  hoursList[2] = "Wednesday: " + hoursList[2];
+  hoursList[3] = "Thursday: " + hoursList[3];
+  hoursList[4] = "Friday: " + hoursList[4];
+  hoursList[5] = "Saturday: " + hoursList[5];
+  hoursList[6] = "Sunday: " + hoursList[6];
+  console.log(hoursList);
+  return hoursList;
 }

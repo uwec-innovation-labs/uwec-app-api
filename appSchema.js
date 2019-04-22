@@ -7,6 +7,13 @@ var appSchema = buildSchema(`
         bus_data(stops:[Int], routes:[Int], buses:[Int]): BusData
         laundryRoom(building:String!): LaundryRoom
         news: [News]
+        dining: [Dining]
+    }
+
+    type Dining {
+        name: String
+        hours: [String]
+        menu: [String]
     }
 
     type News {
@@ -69,6 +76,7 @@ var appSchema = buildSchema(`
         route: Int
         bus_type: String
     }
+
 `)
 
 module.exports = {

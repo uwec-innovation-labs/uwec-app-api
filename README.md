@@ -91,5 +91,15 @@ Available queries:
             title
             link
             image
-            }
+        }
     }
+
+
+-dining: gets the hours for all the food places on campus. I should be able to get the Riverview menu if sodexo ever accepts my request to use their API
+    {
+        dining {
+            name
+            hours
+        }
+    }
+    frontend should nclude this disclaimer: *Hours are subject to change.

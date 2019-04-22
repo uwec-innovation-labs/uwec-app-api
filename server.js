@@ -15,7 +15,8 @@ var global = {
   weather: appController.getWeather,
   bus_data: appController.getBus,
   laundryRoom: appController.getLaundryRoom,
-  news: appController.getNews
+  news: appController.getNews,
+  dining: appController.getDining
 }
 
 app.use(
