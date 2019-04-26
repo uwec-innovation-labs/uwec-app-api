@@ -1,0 +1,91 @@
+[{
+  "accessCodeId": 18924,
+  "code": "24TW3",
+  "locationId": "84956001",
+  "locationName": "UWEC HILLTOP RES DINING",
+  "locationAddress": "ROOM 250E DAVIES CENTER 77 ROOSEVEL, EAU CLAIRE, WI 54701",
+  "distanceInMeters": 126.98,
+  "distanceInMiles": 0.08,
+  "menus": [{
+    "menuId": 14916,
+    "locationId": "84956001",
+    "locationName": "UWEC HILLTOP RES DINING",
+    "name": "84956001 UWEC HILLTOP RES DINING",
+    "accessCode": "24TW3",
+    "showToConsumers": true,
+    "sourceSystemKey": null,
+    "outletId": 28916,
+    "outletRating": 0,
+    "menuSourceSystemId": 0,
+    "menuDays": null,
+    "outletTypeId": 1
+  }]
+}, {
+  "accessCodeId": 18924,
+  "code": "24TW3",
+  "locationId": "84956004",
+  "locationName": "UWEC DAVIES MARKETPLACE",
+  "locationAddress": "77 ROOSEVELT AVE, EAU CLAIRE, WI 54701",
+  "distanceInMeters": 373.61,
+  "distanceInMiles": 0.23,
+  "menus": [{
+    "menuId": 15676,
+    "locationId": "84956004",
+    "locationName": "UWEC DAVIES MARKETPLACE",
+    "name": "84956004 UWEC DAVIES MARKETPLACE - Blu Flame Grill",
+    "accessCode": "24TW3",
+    "showToConsumers": true,
+    "sourceSystemKey": null,
+    "outletId": 23245,
+    "outletRating": 9,
+    "menuSourceSystemId": 0,
+    "menuDays": null,
+    "outletTypeId": 1
+  }]
+}, {
+******DULANEY
+  "accessCodeId": 18924,
+  "code": "24TW3",
+  "locationId": "84956010",
+  "locationName": "UWEC CATERING",
+  "locationAddress": "105 GARFIELD AVE, EAU CLAIRE, WI 54701",
+  "distanceInMeters": 373.61,
+  "distanceInMiles": 0.23,
+  "menus": [{
+    "menuId": 14843,
+    "locationId": "84956010",
+    "locationName": "UWEC CATERING",
+    "name": "84956010 UWEC CATERING",
+    "accessCode": "24TW3",
+    "showToConsumers": true,
+    "sourceSystemKey": null,
+    "outletId": 28258,
+    "outletRating": 0,
+    "menuSourceSystemId": 0,
+    "menuDays": null,
+    "outletTypeId": 1
+  }]
+}, {
+  ***** No Cabin data
+  "accessCodeId": 18924,
+  "code": "24TW3",
+  "locationId": "84956022",
+  "locationName": "UWEC - THE CABIN",
+  "locationAddress": "105 GARFIELD AVE, EAU CLAIRE, WI 54701",
+  "distanceInMeters": 373.61,
+  "distanceInMiles": 0.23,
+  "menus": [{
+    "menuId": 14844,
+    "locationId": "84956022",
+    "locationName": "UWEC - THE CABIN",
+    "name": "84956022 UWEC - THE CABIN",
+    "accessCode": "24TW3",
+    "showToConsumers": true,
+    "sourceSystemKey": null,
+    "outletId": 28023,
+    "outletRating": 0,
+    "menuSourceSystemId": 0,
+    "menuDays": null,
+    "outletTypeId": 1
+  }]
+}

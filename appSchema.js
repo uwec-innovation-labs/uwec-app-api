@@ -8,6 +8,7 @@ var appSchema = buildSchema(`
         laundryRoom(building:String!): LaundryRoom
         news: [News]
         dining: [Dining]
+        events: [Event]
     }
 
     type Dining {
@@ -20,6 +21,11 @@ var appSchema = buildSchema(`
         title: String
         link: String
         image: String
+    }
+
+    type Event {
+        name: String
+        time: String
     }
 
     type Laundry {
