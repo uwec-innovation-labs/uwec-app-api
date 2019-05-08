@@ -100,6 +100,38 @@ Available queries:
         dining {
             name
             hours
+            menu {
+                name
+                number
+                uomID
+            }
         }
     }
     frontend should nclude this disclaimer: *Hours are subject to change.
+    The only menus we get through Sodexo are Davies Marketplace, Dulany Inn, and Riverview Cafe East. I think the rest of them are set menus that don't change.
+    'name' is the name of the food item, 'number' and 'uomID' can be used to get nutritional info
+
+-nutrition: gets nutritional information for a specific food item. It would take way too long to put this in dining so it gets its own query. number and uomID are required fields, number is a string but uomID is an int (confusing, I know, don't blame me blame Sodexo)
+
+    {
+        nutrition(number:"810728", uomID:275554) {
+            name
+            allergens
+            vegetarian
+            vegan
+            description
+            ingredients
+            calories
+            caloriesFromFat
+            fat
+            saturatedFat
+            transFat
+            protein
+            carbohydrates
+            fiber
+            sugar
+            sodium
+            iron
+            cholesterol
+        }
+    }

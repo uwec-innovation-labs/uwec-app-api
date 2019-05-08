@@ -8,22 +8,41 @@ var appSchema = buildSchema(`
         laundryRoom(building:String!): LaundryRoom
         news: [News]
         dining: [Dining]
+        nutrition(number:String!,uomID:Int!): NutritionInfo
         events: [Event]
     }
 
     type Dining {
         name: String
         hours: [String]
-        menu: [String]
+        menu: [MenuItem]
     }
 
     type MenuItem {
+        name: String
+        number: String
+        uomID: Int
+    }
+
+    type NutritionInfo {
         name: String
         allergens: [String]
         vegetarian: Boolean
         vegan: Boolean
         description: String
         ingredients: String
+        calories: String
+        caloriesFromFat: String
+        fat: String
+        saturatedFat: String
+        transFat: String
+        protein: String
+        carbohydrates: String
+        fiber: String
+        sugar: String
+        sodium: String
+        iron: String
+        cholesterol: String
     }
 
     type News {

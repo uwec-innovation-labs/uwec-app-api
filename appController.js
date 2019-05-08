@@ -213,38 +213,109 @@ function GetFormattedDate() {
   return month + "-" + day;
 }
 
-/*await promise;
-        var foodName = menuItem.formalName;
-        var foodNumber = menuItem.number;
-        var uomId = menuItem.uomId;
-        console.log(diningURL + "fooditems/" + foodNumber + "/" + uomId);
-        //Nutritional info
-        var newMenuItem = {
-          name: foodName
-        };
-        try {
-          await axios({
-            method: 'get',
-            url: diningURL + "fooditems/" + foodNumber + "/" + uomId, 
-            headers: myHeaders
-          })
-          .then(response => {
-            if (response.status === 200) {
-              newMenuItem.description = response.data.description;
-              var uom = response.data.requestedUOM;
-              newMenuItem.ingredients = uom.listOfIngredients;
-            }
-          });
-        } catch(err) {
-          //Sodexo messed up
-        }*/
+async function getNutrition(parent, args, context, info) {
+  var foodNumber = parent.number;
+  var uomID = parent.uomID;
+  var nutrition = {};
+  await axios({
+    method: 'get',
+    url: diningURL + "fooditems/" + foodNumber + "/" + uomID, 
+    headers: myHeaders
+  })
+  .then(response => {
+    if (response.status === 200) {
+      nutrition.name = response.data.formalName;
+      nutrition.description = response.data.description;
+      nutrition.ingredients = response.data.requestedUOM.listOfIngredients;
+      nutrition.vegetarian = response.data.isVegetarian;
+      nutrition.vegan = response.data.isVegan;
+      nutrition.calories = response.data.requestedUOM.displayCalories;
+      nutrition.caloriesFromFat = response.data.requestedUOM.displayCaloriesFromFat;
+      nutrition.fat = response.data.requestedUOM.displayFat;
+      nutrition.saturatedFat = response.data.requestedUOM.displaySaturatedFat;
+      nutrition.transFat = response.data.requestedUOM.displayTransFat;
+      nutrition.cholesterol = response.data.requestedUOM.displayCholesterol;
+      nutrition.sodium = response.data.requestedUOM.displaySodium;
+      nutrition.sugar = response.data.requestedUOM.displaySugar;
+      nutrition.fiber = response.data.requestedUOM.displayDietaryFiber;
+      nutrition.iron = response.data.requestedUOM.displayIron;
+      nutrition.protein = response.data.requestedUOM.displayProtein;
+      nutrition.carbohydrates = response.data.requestedUOM.displayCarbohydrates;
+      nutrition.allergens = [];
+      if (response.data.requestedUOM.milkAllergen) {
+        nutrition.allergens.push("Milk")
+      }
+      if (response.data.requestedUOM.eggsAllergen) {
+        nutrition.allergens.push("Eggs")
+      }
+      if (response.data.requestedUOM.fishAllergen) {
+        nutrition.allergens.push("Fish")
+      }
+      if (response.data.requestedUOM.shellfishAllergen) {
+        nutrition.allergens.push("Shellfish")
+      }
+      if (response.data.requestedUOM.wheatAllergen) {
+        nutrition.allergens.push("Wheat")
+      }
+      if (response.data.requestedUOM.peanutAllergen) {
+        nutrition.allergens.push("Peanuts")
+      }
+      if (response.data.requestedUOM.treenutsAllergen) {
+        nutrition.allergens.push("Tree Nuts")
+      }
+      if (response.data.requestedUOM.soybeanAllergen) {
+        nutrition.allergens.push("Soybeans")
+      }
+      if (response.data.requestedUOM.glutenAllergen) {
+        nutrition.allergens.push("Gluten")
+      }
+      if (response.data.requestedUOM.msgAllergen) {
+        nutrition.allergens.push("MSG")
+      }
+      if (response.data.requestedUOM.mustardAllergen) {
+        nutrition.allergens.push("Mustard")
+      }
+      if (response.data.requestedUOM.celeryAllergen) {
+        nutrition.allergens.push("Celery")
+      }
+      if (response.data.requestedUOM.crustaceansAllergen) {
+        nutrition.allergens.push("Crustaceans")
+      }
+      if (response.data.requestedUOM.lupinAllergen) {
+        nutrition.allergens.push("Lupin")
+      }
+      if (response.data.requestedUOM.molluscsAllergen) {
+        nutrition.allergens.push("Moluscs")
+      }
+      if (response.data.requestedUOM.nutsAllergen) {
+        nutrition.allergens.push("Nuts")
+      }
+      if (response.data.requestedUOM.sesameSeedsAllergen) {
+        nutrition.allergens.push("Sesame Seeds")
+      }
+      if (response.data.requestedUOM.sulphitesAllergen) {
+        nutrition.allergens.push("Sulphites")
+      }
+    }
+  });
+
+  return nutrition;
+}
+
+function getMenuItem(menuItem) {
+  var newMenuItem = {};
+  newMenuItem.name = menuItem.formalName;
+  newMenuItem.uomID = menuItem.uomId;
+  newMenuItem.number = menuItem.number;
+  return newMenuItem;
+}
 
 async function getDining(parent, args, context, info) {
   var today = GetFormattedDate();
   var REastBreakfast = [];
   var REastLunch = [];
   var REastDinner = [];
-  console.log("getting hilltop");
+
   await axios({
     method: 'get',
     url: diningURL + "menus/" + hilltopLocationID + "/" + today + "/" + today + "/" + hilltopMenuID,
@@ -257,11 +328,11 @@ async function getDining(parent, args, context, info) {
       menuDayOne.forEach((menuItem) => {
         if (menuItem.course == "Main Line") {
           if (menuItem.meal === "Breakfast") {
-            REastBreakfast.push(menuItem.formalName);
+            REastBreakfast.push(getMenuItem(menuItem));
           } else if (menuItem.meal === "Lunch") {
-            REastLunch.push(menuItem.formalName);
+            REastLunch.push(getMenuItem(menuItem));
           } else if (menuItem.meal === "Dinner") {
-            REastDinner.push(menuItem.formalName);
+            REastDinner.push(getMenuItem(menuItem));
           }
         }
       });
@@ -283,34 +354,32 @@ async function getDining(parent, args, context, info) {
     if (response.status === 200) {
       menuItems = response.data[0].menuDays[0].menuItems;
       menuItems.reduce(async(promise, menuItem) => {
-        //newMenuItem.name1 = menuItem.formalName;
         if (menuItem.course === "Mongolian Noodle Bowl" || menuItem.course === "Mongolian Rice Bowl") {
           if (menuItem.planningGroupDescription !== "MISC. ITEMS") {
-            monGrillMenu.push(menuItem.formalName);
+            monGrillMenu.push(getMenuItem(menuItem));
           }
         } else if (menuItem.course === "Tres Habeneros") {
           if (menuItem.uomDescription === "1 ENTREE") {
-            tresHabMenu.push(menuItem.formalName);
+            tresHabMenu.push(getMenuItem(menuItem));
           }
         } else if (menuItem.course === "Blu Flame Grill") {
           if (menuItem.planningGroupDescription === "SAND-POULTRY (HOT)") {
-            bluFlameMenu.push(menuItem.formalName);
+            bluFlameMenu.push(getMenuItem(menuItem));
           }
         } else if (menuItem.course === "Blu Flame Breakfast") {
           if (menuItem.foodMainCategoryDescription === "Mains") {
             //fix to add 'breakfast' distinction
-            bluFlameMenu.push(menuItem.formalName);
+            bluFlameMenu.push(getMenuItem(menuItem));
           }
         } else {
           if (menuItem.course !== "Blu Flame Homestyle Bar" && menuItem.course !== "Seasons Salad Bar" && menuItem.planningGroupDescription !== "SNACKS" && menuItem.planningGroupDescription !== "MISC. ITEMS" && menuItem.planningGroupDescription !== "Other") {
-            marketMenu.push(menuItem.formalName);
+            marketMenu.push(getMenuItem(menuItem));
           }
         }
       }, Promise.resolve());
     }
   });
 
-console.log("getting dulaney");
   var dulanyMenu = [];
   await axios({
   method: 'get',
@@ -321,11 +390,11 @@ console.log("getting dulaney");
     if (response.status === 200) {
       var menuItems = response.data[0].menuDays[0].menuItems;
       menuItems.forEach(function(menuItem) {
-        dulanyMenu.push(menuItem.formalName);
+        dulanyMenu.push(getMenuItem(menuItem));
       });
     }
   });
-console.log("getting dates");
+
   let data = await axios
   .get(foodURL)
   .then(response => {
@@ -418,5 +487,6 @@ module.exports = {
   getBus: getBus,
   getLaundryRoom: getLaundryRoom,
   getNews: getNews,
-  getDining: getDining
+  getDining: getDining,
+  getNutrition: getNutrition
 }
