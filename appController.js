@@ -213,6 +213,32 @@ function GetFormattedDate() {
   return month + "-" + day;
 }
 
+/*await promise;
+        var foodName = menuItem.formalName;
+        var foodNumber = menuItem.number;
+        var uomId = menuItem.uomId;
+        console.log(diningURL + "fooditems/" + foodNumber + "/" + uomId);
+        //Nutritional info
+        var newMenuItem = {
+          name: foodName
+        };
+        try {
+          await axios({
+            method: 'get',
+            url: diningURL + "fooditems/" + foodNumber + "/" + uomId, 
+            headers: myHeaders
+          })
+          .then(response => {
+            if (response.status === 200) {
+              newMenuItem.description = response.data.description;
+              var uom = response.data.requestedUOM;
+              newMenuItem.ingredients = uom.listOfIngredients;
+            }
+          });
+        } catch(err) {
+          //Sodexo messed up
+        }*/
+
 async function getDining(parent, args, context, info) {
   var today = GetFormattedDate();
   var REastBreakfast = [];
@@ -247,7 +273,6 @@ async function getDining(parent, args, context, info) {
   var monGrillMenu = [];
   var tresHabMenu = [];
 
-  try {
   await axios({
     method: 'get',
     url: diningURL + "menus/" + daviesLocationID + "/" + today + "/" + today + "/" + daviesMenuID,
@@ -258,32 +283,6 @@ async function getDining(parent, args, context, info) {
     if (response.status === 200) {
       menuItems = response.data[0].menuDays[0].menuItems;
       menuItems.reduce(async(promise, menuItem) => {
-        /*await promise;
-        var foodName = menuItem.formalName;
-        var foodNumber = menuItem.number;
-        var uomId = menuItem.uomId;
-        console.log(diningURL + "fooditems/" + foodNumber + "/" + uomId);
-        //Nutritional info
-        var newMenuItem = {
-          name: foodName
-        };
-        try {
-          await axios({
-            method: 'get',
-            url: diningURL + "fooditems/" + foodNumber + "/" + uomId, 
-            headers: myHeaders
-          })
-          .then(response => {
-            if (response.status === 200) {
-              newMenuItem.description = response.data.description;
-              var uom = response.data.requestedUOM;
-              newMenuItem.ingredients = uom.listOfIngredients;
-            }
-          });
-        } catch(err) {
-          //Sodexo messed up
-        }*/
-
         //newMenuItem.name1 = menuItem.formalName;
         if (menuItem.course === "Mongolian Noodle Bowl" || menuItem.course === "Mongolian Rice Bowl") {
           if (menuItem.planningGroupDescription !== "MISC. ITEMS") {
@@ -310,9 +309,7 @@ async function getDining(parent, args, context, info) {
       }, Promise.resolve());
     }
   });
-} catch(err) {
-  console.log("eat a dick, sodexo");
-};
+
 console.log("getting dulaney");
   var dulanyMenu = [];
   await axios({
