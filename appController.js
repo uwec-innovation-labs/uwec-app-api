@@ -1,64 +1,42 @@
-const sql = require('mssql')
 const request = require('request-promise')
 const axios = require('axios')
 const cheerio = require('cheerio')
 const newsURL = 'https://www.spectatornews.com/'
 const foodURL = 'https://www.uwec.edu/campus-life/housing-dining/dining/food-services/dining-hours/'
-const calendarURL = 'https://calendar.uwec.edu/MasterCalendar.aspx'
+require("dotenv").config()
 
-const diningURL = 'https://bite-external-api.azure-api.net/extern/menus/'
+const diningURL = 'https://bite-external-api.azure-api.net/extern/'
+const myHeaders = {
+  "sodexo-accesscodes": process.env.PASSCODE,
+  "Ocp-Apim-Subscription-Key": process.env.SUB_KEY,
+}
 const hilltopLocationID = "84956001";
 const hilltopMenuID = "14916";
 const daviesLocationID = "84956004";
 const daviesMenuID = "24TW3";
 const dulanyLocationID = "84956010";
 const dulanyMenuID = "14843";
-const cabinLocationID = "84956022";
-const cabinMenuID = "14844";
-
-/*async function getEvents(parent, args, context, info) {
-  setTimeout( function (i) {
-      request(calendarURL, function (error, response, body) {
-      if (!error) {
-        var $ = cheerio.load(body,{
-          ignoreWhitespace: true
-        });
-        console.log("post load");
-        console.log($('body').find('.show-this-week'));
-      }
-    });
-  }, 10000);
-
-  console.log("set timeout");
-
-  /*let data = await axios
-    .get(calendarURL)
-    .then(response => {
-      if (response.status === 200) {
-        const html = response.data
-        const $ = cheerio.load(html)
-        let events = [];
-        console.log($('.show-this-week').find('div').length);
-        
-        return events;
-      }
-    })
-    .then(response => {
-      return response
-    })
-  return data
-}*/
 
 async function getLaundry(parent, args, context, info) {
-  var id = parent.id
+  var machineID = parent.id;
+  //make the api call to get data
+  var machineData = [];
+  var laundry = [];
 
-  //get the machine's remaining time, somehow
-  var remainingTime = 100
+  machineData.forEach(function(machine) {
+    //may need to filter out vending machines?
+    if (machineID === undefined || machine.MACHINENUM === machineID) {
+      var newMachine = {};
+      newMachine.user = data.CARDNUM;
+      newMachine.id = data.MACHINENUM;
+      newMachine.jobNumber = data.TRANSEQNUM;
+      newMachine.startTime = data.ACTUALDATETIME;
+      //or POSTDATETIME?
+      //can use date.now to calculate remaining time if we hardcode in total time
+      laundry.push(newMachine);
+    }
+  });
 
-  var laundry = {
-    id: id,
-    timeRemaining: 100
-  }
   return laundry
 }
 
@@ -240,13 +218,11 @@ async function getDining(parent, args, context, info) {
   var REastBreakfast = [];
   var REastLunch = [];
   var REastDinner = [];
+  console.log("getting hilltop");
   await axios({
     method: 'get',
-    url: diningURL + hilltopLocationID + "/" + today + "/" + today + "/" + hilltopMenuID,
-    headers: {
-      "sodexo-accesscodes": "24TW3",
-      "Ocp-Apim-Subscription-Key": "e2e4286402cd4195ad6f8ac90ebdf9d4",
-    }
+    url: diningURL + "menus/" + hilltopLocationID + "/" + today + "/" + today + "/" + hilltopMenuID,
+    headers: myHeaders
   })
   .then(response => {
     if (response.status === 200) {
@@ -271,18 +247,44 @@ async function getDining(parent, args, context, info) {
   var monGrillMenu = [];
   var tresHabMenu = [];
 
+  try {
   await axios({
     method: 'get',
-    url: diningURL + daviesLocationID + "/" + today + "/" + today + "/" + daviesMenuID,
-    headers: {
-      "sodexo-accesscodes": "24TW3",
-      "Ocp-Apim-Subscription-Key": "e2e4286402cd4195ad6f8ac90ebdf9d4",
-    }
+    url: diningURL + "menus/" + daviesLocationID + "/" + today + "/" + today + "/" + daviesMenuID,
+    headers: myHeaders,
+    timeout: 1000
   })
   .then(response => {
     if (response.status === 200) {
       menuItems = response.data[0].menuDays[0].menuItems;
-      menuItems.forEach(function(menuItem) {
+      menuItems.reduce(async(promise, menuItem) => {
+        /*await promise;
+        var foodName = menuItem.formalName;
+        var foodNumber = menuItem.number;
+        var uomId = menuItem.uomId;
+        console.log(diningURL + "fooditems/" + foodNumber + "/" + uomId);
+        //Nutritional info
+        var newMenuItem = {
+          name: foodName
+        };
+        try {
+          await axios({
+            method: 'get',
+            url: diningURL + "fooditems/" + foodNumber + "/" + uomId, 
+            headers: myHeaders
+          })
+          .then(response => {
+            if (response.status === 200) {
+              newMenuItem.description = response.data.description;
+              var uom = response.data.requestedUOM;
+              newMenuItem.ingredients = uom.listOfIngredients;
+            }
+          });
+        } catch(err) {
+          //Sodexo messed up
+        }*/
+
+        //newMenuItem.name1 = menuItem.formalName;
         if (menuItem.course === "Mongolian Noodle Bowl" || menuItem.course === "Mongolian Rice Bowl") {
           if (menuItem.planningGroupDescription !== "MISC. ITEMS") {
             monGrillMenu.push(menuItem.formalName);
@@ -297,25 +299,26 @@ async function getDining(parent, args, context, info) {
           }
         } else if (menuItem.course === "Blu Flame Breakfast") {
           if (menuItem.foodMainCategoryDescription === "Mains") {
-            bluFlameMenu.push("(Breakfast):" + menuItem.formalName);
+            //fix to add 'breakfast' distinction
+            bluFlameMenu.push(menuItem.formalName);
           }
         } else {
           if (menuItem.course !== "Blu Flame Homestyle Bar" && menuItem.course !== "Seasons Salad Bar" && menuItem.planningGroupDescription !== "SNACKS" && menuItem.planningGroupDescription !== "MISC. ITEMS" && menuItem.planningGroupDescription !== "Other") {
             marketMenu.push(menuItem.formalName);
           }
         }
-      });
+      }, Promise.resolve());
     }
   });
-
+} catch(err) {
+  console.log("eat a dick, sodexo");
+};
+console.log("getting dulaney");
   var dulanyMenu = [];
   await axios({
   method: 'get',
-  url: diningURL + dulanyLocationID + "/" + today + "/" + today + "/" + dulanyMenuID,
-  headers: {
-    "sodexo-accesscodes": "24TW3",
-    "Ocp-Apim-Subscription-Key": "e2e4286402cd4195ad6f8ac90ebdf9d4",
-  }
+  url: diningURL + "menus/" + dulanyLocationID + "/" + today + "/" + today + "/" + dulanyMenuID,
+  headers: myHeaders
   })
   .then(response => {
     if (response.status === 200) {
@@ -325,7 +328,7 @@ async function getDining(parent, args, context, info) {
       });
     }
   });
-
+console.log("getting dates");
   let data = await axios
   .get(foodURL)
   .then(response => {

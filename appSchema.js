@@ -17,6 +17,15 @@ var appSchema = buildSchema(`
         menu: [String]
     }
 
+    type MenuItem {
+        name: String
+        allergens: [String]
+        vegetarian: Boolean
+        vegan: Boolean
+        description: String
+        ingredients: String
+    }
+
     type News {
         title: String
         link: String
@@ -29,8 +38,10 @@ var appSchema = buildSchema(`
     }
 
     type Laundry {
+        user: String
         id: Int
-        timeRemaining: Int
+        jobNumber: Int
+        startTime: Float
     }
     
     type LaundryRoom {
