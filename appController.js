@@ -73,7 +73,7 @@ async function getLaundryRoom(parent, args, context, info) {
       totalNumWashers: 9,
       totalNumDryers: 9,
       washersAvailable: 4,
-      dryersAvailable: 5
+      dryersAvailable: 55
     }
   } else if (parent === 'bridgman') {
     laundryRoom = {
