@@ -1,5 +1,11 @@
 Run 'npm start' in this folder, then open "http://localhost:4000/graphql" in browser
 
+To Run Docker:
+
+docker build . -t uwec-app-api
+
+docker run -p 4000:<whicheverportyouwant> <your username>/uwec-app-api
+
 Available queries:
 -a laundry prototype: requires a laundry machine ID (a number) and returns that ID and the time remaining on the machine (another number)
     example: (type the following into the graphql interface in your browser)
