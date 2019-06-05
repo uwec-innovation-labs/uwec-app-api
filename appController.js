@@ -67,7 +67,7 @@ async function getLaundry(parent, args, context, info) {
 async function getLaundryRoom(parent, args, context, info) {
   // Return laundryRoom with dummy data for the stats of the room
   let laundryRoom
-  if (parent === 'towers') {
+  if (parent.building === 'towers') {
     laundryRoom = {
       id: parent.building,
       totalNumWashers: 9,
@@ -75,7 +75,7 @@ async function getLaundryRoom(parent, args, context, info) {
       washersAvailable: 4,
       dryersAvailable: 55
     }
-  } else if (parent === 'bridgman') {
+  } else if (parent.building === 'bridgman') {
     laundryRoom = {
       id: parent.building,
       totalNumWashers: 4,
@@ -83,7 +83,7 @@ async function getLaundryRoom(parent, args, context, info) {
       washersAvailable: 4,
       dryersAvailable: 5
     }
-  } else if (parent === 'horan') {
+  } else if (parent.building === 'horan') {
     laundryRoom = {
       id: parent.building,
       totalNumWashers: 22,
@@ -91,7 +91,7 @@ async function getLaundryRoom(parent, args, context, info) {
       washersAvailable: 4,
       dryersAvailable: 5
     }
-  } else if (parent === 'oak') {
+  } else if (parent.building === 'oak') {
     laundryRoom = {
       id: parent.building,
       totalNumWashers: 1,
