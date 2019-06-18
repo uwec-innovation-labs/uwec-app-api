@@ -6,6 +6,8 @@ const newsURL = 'https://www.spectatornews.com/'
 const foodURL =
   'https://www.uwec.edu/campus-life/housing-dining/dining/food-services/dining-hours/'
 const calendarURL = 'https://calendar.uwec.edu/MasterCalendar.aspx'
+const MongoClient = require('mongodb').MongoClient
+const mongoURL = 'Insert URL here'
 
 const diningURL = 'https://bite-external-api.azure-api.net/extern/menus/'
 const hilltopLocationID = '84956001'
@@ -505,6 +507,39 @@ async function getDining(parent, args, context, info) {
       return response
     })
   return data
+}
+
+// Database section for use within UWEC App
+
+let laundryDB = async (parent, args, context, info) => {
+  // This method will need to be passed which laundry room its looking for
+  let id = parent
+  returnData = {
+    availWashers: 0,
+    availDryers: 0,
+    totalWashers: 0,
+    totalDryers: 0
+  }
+  await MongoClient.connect(mongoURL, function(err, db) {
+    if (err) throw err
+    let database = db.db('insert database name here')
+    database.collection('insert collection name here').findOne(
+      {
+        /*insert query here*/
+      },
+      function(err, result) {
+        if (err) throw err
+        returnData = {
+          availWashers: result.availWashers,
+          availDryers: result.availDryers,
+          totalWashers: result.totalWashers,
+          totalDryers: result.totalDryers
+        }
+        database.close()
+      }
+    )
+  })
+  return returnData
 }
 
 module.exports = {
