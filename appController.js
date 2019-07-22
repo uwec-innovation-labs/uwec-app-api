@@ -18,6 +18,9 @@ const dulanyLocationID = '84956010'
 const dulanyMenuID = '14843'
 const cabinLocationID = '84956022'
 const cabinMenuID = '14844'
+const sendmail = require('sendmail')
+const MESSAGE_ENDPOINT = 'http://3217019a.ngrok.io/message'
+const fetch = require('node-fetch')
 
 /*async function getEvents(parent, args, context, info) {
   setTimeout( function (i) {
@@ -112,7 +115,23 @@ async function getLaundryRoom(parent, args, context, info) {
   }
   return laundryRoom
 }
-
+async function setEmergencyAlert(parent, args, context, info) {
+  const message = {
+    subject: parent.subject,
+    message: parent.message
+  }
+  fetch(MESSAGE_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: 'Emergency Alert: ' + message.subject + '\n' + message.message
+    })
+  })
+  return message
+}
 async function getWeather(parent, args, context, info) {
   //I'm using Dark Sky API, which is free for 1000 calls per day
   let weather = await request(
@@ -548,5 +567,6 @@ module.exports = {
   getBus: getBus,
   getLaundryRoom: getLaundryRoom,
   getNews: getNews,
-  getDining: getDining
+  getDining: getDining,
+  setEmergencyAlert: setEmergencyAlert
 }
