@@ -16,7 +16,8 @@ var global = {
   bus_data: appController.getBus,
   laundryRoom: appController.getLaundryRoom,
   news: appController.getNews,
-  dining: appController.getDining
+  dining: appController.getDining,
+  emergencyAlert: appController.setEmergencyAlert
 }
 
 app.use(

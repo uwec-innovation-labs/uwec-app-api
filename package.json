@@ -1,7 +1,7 @@
 {
   "name": "uwec-app-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Run 'npm start' in this folder, then open \"http://localhost:4000/graphql\" in browser",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,17 +10,30 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.1",
     "cheerio": "^1.0.0-rc.3",
     "cors": "^2.8.5",
+    "express": "^4.16.4",
     "express-graphql": "^0.7.1",
     "graphql": "^14.2.1",
     "morgan": "^1.9.1",
+    "mssql": "^5.1.0",
+    "node-fetch": "^2.6.0",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4"
+    "request-promise": "^4.2.4",
+    "sendmail": "^1.6.1"
   },
   "prettier": {
     "tabWidth": 2,
     "semi": false,
     "singleQuote": true
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clearwater-labs/uwec-app-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/clearwater-labs/uwec-app-api/issues"
+  },
+  "homepage": "https://github.com/clearwater-labs/uwec-app-api#readme"
 }

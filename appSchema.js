@@ -6,9 +6,18 @@ var appSchema = buildSchema(`
         weather: Weather
         bus_data(stops:[Int], routes:[Int], buses:[Int]): BusData
         laundryRoom(building:String!): LaundryRoom
+        message: Message
         news: [News]
         dining: [Dining]
         events: [Event]
+    }
+
+    type Mutation {
+        emergencyAlert(subject: String!, message: String!): Message!
+    }
+    type Message {
+        subject: String!
+        message: String!
     }
 
     type Dining {

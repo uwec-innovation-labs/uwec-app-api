@@ -6,6 +6,8 @@ const newsURL = 'https://www.spectatornews.com/'
 const foodURL =
   'https://www.uwec.edu/campus-life/housing-dining/dining/food-services/dining-hours/'
 const calendarURL = 'https://calendar.uwec.edu/MasterCalendar.aspx'
+// const MongoClient = require('mongodb').MongoClient
+// const mongoURL = 'Insert URL here'
 
 const diningURL = 'https://bite-external-api.azure-api.net/extern/menus/'
 const hilltopLocationID = '84956001'
@@ -16,6 +18,9 @@ const dulanyLocationID = '84956010'
 const dulanyMenuID = '14843'
 const cabinLocationID = '84956022'
 const cabinMenuID = '14844'
+const sendmail = require('sendmail')
+const MESSAGE_ENDPOINT = 'http://3217019a.ngrok.io/message'
+const fetch = require('node-fetch')
 
 /*async function getEvents(parent, args, context, info) {
   setTimeout( function (i) {
@@ -110,7 +115,23 @@ async function getLaundryRoom(parent, args, context, info) {
   }
   return laundryRoom
 }
-
+async function setEmergencyAlert(parent, args, context, info) {
+  const message = {
+    subject: parent.subject,
+    message: parent.message
+  }
+  fetch(MESSAGE_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: 'Emergency Alert: ' + message.subject + '\n' + message.message
+    })
+  })
+  return message
+}
 async function getWeather(parent, args, context, info) {
   //I'm using Dark Sky API, which is free for 1000 calls per day
   let weather = await request(
@@ -507,11 +528,45 @@ async function getDining(parent, args, context, info) {
   return data
 }
 
+// Database section for use within UWEC App
+
+// let laundryDB = async (parent, args, context, info) => {
+//   // This method will need to be passed which laundry room its looking for
+//   let id = parent
+//   returnData = {
+//     availWashers: 0,
+//     availDryers: 0,
+//     totalWashers: 0,
+//     totalDryers: 0
+//   }
+//   await MongoClient.connect(mongoURL, function(err, db) {
+//     if (err) throw err
+//     let database = db.db('insert database name here')
+//     database.collection('insert collection name here').findOne(
+//       {
+//         /*insert query here*/
+//       },
+//       function(err, result) {
+//         if (err) throw err
+//         returnData = {
+//           availWashers: result.availWashers,
+//           availDryers: result.availDryers,
+//           totalWashers: result.totalWashers,
+//           totalDryers: result.totalDryers
+//         }
+//         database.close()
+//       }
+//     )
+//   })
+//   return returnData
+// }
+
 module.exports = {
   getLaundry: getLaundry,
   getWeather: getWeather,
   getBus: getBus,
   getLaundryRoom: getLaundryRoom,
   getNews: getNews,
-  getDining: getDining
+  getDining: getDining,
+  setEmergencyAlert: setEmergencyAlert
 }
